@@ -1,0 +1,9 @@
+{
+  "name": "quantum-hydrogen-engine-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A browser-based conceptual quantum Otto engine simulator",
+  "scripts": {
+    "test": "node --test"
+  }
+}

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b1019">
+    <meta name="description" content="量子二準位オットーサイクルの設計パラメーターを試せる概念シミュレーター。">
+    <title>Q-Engine Lab | 量子エンジン設計シミュレーター</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="src/simulator.js" defer></script>
+    <script src="src/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="Q-Engine Lab ホーム">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span>Q-ENGINE<span class="brand-sub">RESEARCH LAB</span></span>
+        </a>
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="side-nav" aria-label="メインナビゲーション">
+          <a class="nav-item active" href="#simulator"><span class="nav-icon">◈</span>シミュレーター</a>
+          <a class="nav-item" href="#model"><span class="nav-icon">⌘</span>モデルについて</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-status"><span class="status-dot"></span>ローカル実行中</div>
+          <div class="sidebar-version">PROTOTYPE · v0.1.0</div>
+        </div>
+      </aside>
+
+      <main class="main-content" id="simulator">
+        <header class="topbar">
+          <div class="breadcrumbs">プロジェクト <span>/</span> 新しい設計</div>
+          <div class="topbar-right"><span class="topbar-chip">概念シミュレーション</span><span class="avatar">Q</span></div>
+        </header>
+
+        <div class="page-content">
+          <section class="page-heading">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-line"></span>QUANTUM THERMODYNAMICS</div>
+              <h1>エンジン設計シミュレーター</h1>
+              <p class="page-description">二準位量子系の理想オットーサイクルを使って、設計パラメーターと出力の関係を探索します。</p>
+            </div>
+            <div class="model-badge"><span class="badge-pulse"></span>THEORETICAL MODEL</div>
+          </section>
+
+          <section class="notice" role="note">
+            <span class="notice-icon" aria-hidden="true">ⓘ</span>
+            <p><strong>研究・学習用の概念モデルです。</strong>実在する水素エンジンの性能予測、実験結果、安全性を保証するものではありません。</p>
+            <a href="#model">モデルの前提 <span aria-hidden="true">↗</span></a>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel design-panel" aria-labelledby="design-title">
+              <div class="panel-heading">
+                <div>
+                  <div class="section-kicker">01 / INPUT</div>
+                  <h2 id="design-title">サイクル設計</h2>
+                </div>
+                <button class="text-button" id="reset-button" type="button">初期値に戻す <span aria-hidden="true">↺</span></button>
+              </div>
+
+              <form id="design-form">
+                <div class="input-group">
+                  <div class="group-heading"><span class="group-icon hot-icon" aria-hidden="true">↗</span><div><h3>熱浴温度</h3><p>エンジンに熱を供給・排出する環境</p></div></div>
+                  <div class="field-row">
+                    <label for="hot-temp">高温熱浴</label>
+                    <div class="number-field"><input id="hot-temp" name="hotTempK" type="number" min="301" max="10000" step="1" value="2000" required><span>K</span></div>
+                  </div>
+                  <div class="field-row">
+                    <label for="cold-temp">低温熱浴</label>
+                    <div class="number-field"><input id="cold-temp" name="coldTempK" type="number" min="100" max="9999" step="1" value="500" required><span>K</span></div>
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <div class="group-heading"><span class="group-icon gap-icon" aria-hidden="true">⌁</span><div><h3>エネルギー準位差</h3><p>断熱過程で切り替える二準位系のギャップ</p></div></div>
+                  <div class="field-row">
+                    <label for="hot-gap">高温側ギャップ</label>
+                    <div class="number-field"><input id="hot-gap" name="hotGapEV" type="number" min="0.001" max="10" step="0.001" value="0.3" required><span>eV</span></div>
+                  </div>
+                  <div class="field-row">
+                    <label for="cold-gap">低温側ギャップ</label>
+                    <div class="number-field"><input id="cold-gap" name="coldGapEV" type="number" min="0.001" max="9.999" step="0.001" value="0.1" required><span>eV</span></div>
+                  </div>
+                </div>
+
+                <div class="input-group last-group">
+                  <div class="group-heading"><span class="group-icon system-icon" aria-hidden="true">⠿</span><div><h3>系のスケール</h3><p>出力換算に使う理想化パラメーター</p></div></div>
+                  <div class="field-row">
+                    <label for="systems">二準位系の数</label>
+                    <div class="number-field"><input id="systems" name="systems" type="number" min="1" max="1e30" step="1e12" value="1e18" required><span>個</span></div>
+                  </div>
+                  <div class="field-row">
+                    <label for="frequency">サイクル周波数</label>
+                    <div class="number-field"><input id="frequency" name="frequencyHz" type="number" min="1" max="1e15" step="any" value="1e9" required><span>Hz</span></div>
+                  </div>
+                </div>
+                <p class="form-error" id="form-error" aria-live="polite"></p>
+              </form>
+            </section>
+
+            <section class="results-column" aria-label="シミュレーション結果">
+              <article class="panel output-panel">
+                <div class="panel-heading output-heading">
+                  <div><div class="section-kicker">02 / OUTPUT</div><h2>推定パフォーマンス</h2></div>
+                  <span class="live-label"><span></span>LIVE</span>
+                </div>
+                <div class="power-card">
+                  <div class="power-label">理想出力 <span>POWER OUTPUT</span></div>
+                  <div class="power-reading"><strong id="power-value">—</strong><span id="power-unit">—</span></div>
+                  <div class="power-caption" id="power-caption">計算中…</div>
+                  <div class="power-decoration" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+                <div class="metric-grid">
+                  <div class="metric"><span class="metric-label">熱効率 <span>EFFICIENCY</span></span><strong id="efficiency-value">—</strong><div class="metric-track"><span id="efficiency-bar"></span></div></div>
+                  <div class="metric"><span class="metric-label">1サイクルの仕事 <span>WORK / CYCLE</span></span><strong id="work-value">—</strong></div>
+                  <div class="metric"><span class="metric-label">高温側の励起確率 <span>HOT EXCITATION</span></span><strong id="hot-population">—</strong></div>
+                  <div class="metric"><span class="metric-label">低温側の励起確率 <span>COLD EXCITATION</span></span><strong id="cold-population">—</strong></div>
+                </div>
+                <div class="regime" id="regime"><span class="regime-dot"></span><span id="regime-label">計算中…</span></div>
+              </article>
+
+              <article class="panel cycle-panel">
+                <div class="panel-heading compact-heading">
+                  <div><div class="section-kicker">03 / CYCLE</div><h2>理想オットーサイクル</h2></div>
+                  <span class="cycle-tag">P–ε DIAGRAM</span>
+                </div>
+                <div class="cycle-chart">
+                  <div class="chart-y-label">励起確率 <span>p</span></div>
+                  <svg viewBox="0 0 520 210" role="img" aria-labelledby="chart-title chart-desc">
+                    <title id="chart-title">励起確率とエネルギーギャップのサイクル図</title>
+                    <desc id="chart-desc">温度浴との熱交換と、ギャップ切り替えを示す模式図。実測データではありません。</desc>
+                    <defs><linearGradient id="cycle-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#6c8cff" stop-opacity=".2"/><stop offset="100%" stop-color="#6c8cff" stop-opacity="0"/></linearGradient></defs>
+                    <path class="grid-line" d="M56 30H498M56 75H498M56 120H498M56 165H498"/>
+                    <path class="axis-line" d="M56 18V175H498"/>
+                    <text class="axis-tick" x="30" y="169">0</text><text class="axis-tick" x="24" y="124">0.3</text><text class="axis-tick" x="24" y="79">0.6</text><text class="axis-tick" x="24" y="34">0.9</text>
+                    <text class="axis-tick" x="50" y="193">0</text><text class="axis-tick" x="467" y="193">ギャップ ε</text>
+                    <path id="cycle-area" class="cycle-area" d="M126 94L382 59L382 118L126 150Z"/>
+                    <path id="cycle-path" class="cycle-path" d="M126 94L382 59L382 118L126 150Z"/>
+                    <circle id="point-a" class="cycle-point hot-point" cx="126" cy="94" r="5"/>
+                    <circle id="point-b" class="cycle-point hot-point" cx="382" cy="59" r="5"/>
+                    <circle id="point-c" class="cycle-point cold-point" cx="382" cy="118" r="5"/>
+                    <circle id="point-d" class="cycle-point cold-point" cx="126" cy="150" r="5"/>
+                    <text class="point-label" x="108" y="82">A</text><text class="point-label" x="391" y="54">B</text><text class="point-label" x="391" y="132">C</text><text class="point-label" x="108" y="166">D</text>
+                  </svg>
+                  <div class="chart-x-labels"><span>低温側ギャップ <strong id="chart-cold-gap">0.100 eV</strong></span><span>高温側ギャップ <strong id="chart-hot-gap">0.300 eV</strong></span></div>
+                </div>
+                <div class="cycle-legend"><span><i class="legend-dot hot-dot"></i>熱交換（等ギャップ）</span><span><i class="legend-dot cold-dot"></i>断熱ギャップ切替</span><span class="chart-note">模式図・スケール非対応</span></div>
+              </article>
+            </section>
+          </div>
+
+          <section class="model-section" id="model">
+            <div class="model-heading"><div class="section-kicker">MODEL NOTES</div><h2>モデルの前提と限界</h2></div>
+            <div class="model-cards">
+              <article class="model-card"><span class="model-number">01</span><div><h3>二準位系の理想オットーサイクル</h3><p>熱浴と平衡化した励起確率 <code>p = 1 / (1 + exp(ε / kBT))</code> を使い、理想的な断熱ギャップ切替を仮定します。</p></div></article>
+              <article class="model-card"><span class="model-number">02</span><div><h3>理想値であり、実機性能ではない</h3><p>熱損失、デコヒーレンス、有限速度、材料特性、制御エネルギーは含みません。表示される出力は指定された系の数と周波数に基づく理想推定値です。</p></div></article>
+              <article class="model-card"><span class="model-number">03</span><div><h3>水素原子との対応は未モデル化</h3><p>エネルギーギャップは抽象的な二準位パラメーターです。水素原子の準位構造や、ギャップを変化させる実現可能な装置を表したものではありません。</p></div></article>
+            </div>
+            <div class="equation-note"><span class="equation-icon">ƒ</span><span>理想仕事 <code>W = N(ε<sub>h</sub> − ε<sub>c</sub>)(p<sub>h</sub> − p<sub>c</sub>)</code></span><span class="equation-divider"></span><span>理想効率 <code>η = 1 − ε<sub>c</sub> / ε<sub>h</sub></code></span></div>
+          </section>
+
+          <footer class="footer"><span>Q-ENGINE LAB <span class="footer-dot">·</span> RESEARCH PROTOTYPE</span><span>結果は理想化モデルによる概算です</span></footer>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
